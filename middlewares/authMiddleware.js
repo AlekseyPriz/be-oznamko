@@ -9,10 +9,11 @@ const verifyToken = async (req, res, next) => {
 
     try {
         const decodedToken = await admin.auth().verifyIdToken(token);
-        req.user = decodedToken;
+        req.user = decodedToken; // Данные о пользователе из токена
         next();
     } catch (error) {
-        res.status(401).json({ error: 'Invalid token' });
+        console.error('Error verifying token:', error.message);
+        res.status(401).json({ error: 'Invalid or expired token' });
     }
 };
 
