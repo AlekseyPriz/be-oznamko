@@ -54,4 +54,19 @@ const getProtectedRoute = (req, res) => {
     });
 };
 
-module.exports = { registerUser, loginUser, getProtectedRoute };
+// Разлогинивание пользователя
+const logoutUser = async (req, res) => {
+    try {
+        // Если хотите дополнительно работать с токенами (например, инвалидировать):
+        const token = req.headers.authorization.split(' ')[1];
+        console.log('req.user.uid =>', req.user.uid);
+        await admin.auth().revokeRefreshTokens(req.user.uid);
+
+        res.status(200).json({ message: 'User logged out successfully' });
+    } catch (error) {
+        console.error('Error logging out user:', error.message);
+        res.status(500).json({ error: 'Error logging out user' });
+    }
+};
+
+module.exports = { registerUser, loginUser, getProtectedRoute, logoutUser };
