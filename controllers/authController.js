@@ -3,19 +3,31 @@ const admin = require('../config/firebase');
 
 // Регистрация пользователя
 const registerUser = async (req, res) => {
-    const { email, password } = req.body;
-
+    const { email, password, displayName, phoneNumber, termsAccepted } = req.body;
+    console.log('req.body =>', req.body);
     try {
+        // Проверяем обязательные поля
+        if (!email || !password || !termsAccepted) {
+            return res.status(400).json({ error: 'Email, password, and terms acceptance are required' });
+        }
+
         // Создаем пользователя в Firebase
         const userRecord = await admin.auth().createUser({
             email,
             password,
+            displayName: displayName || 'New User',
+            phoneNumber: phoneNumber || null,
         });
 
-        // Возвращаем успешный ответ
+        // Здесь можно дополнительно сохранить расширенные данные в Firestore или другой БД, если это необходимо
         res.status(201).json({
             message: 'User created successfully',
-            userRecord,
+            user: {
+                uid: userRecord.uid,
+                email: userRecord.email,
+                displayName: userRecord.displayName,
+                phoneNumber: userRecord.phoneNumber,
+            },
         });
     } catch (error) {
         console.error('Error creating user:', error.message);
@@ -42,7 +54,7 @@ const loginUser = async (req, res) => {
         res.status(200).json({
             message: 'Login successful',
             token: response.data.idToken,
-            email: response.data.email, // Возвращаем email пользователя
+            displayName: response.data.displayName,
         });
     } catch (error) {
         console.error('Error logging in user:', error.message);
