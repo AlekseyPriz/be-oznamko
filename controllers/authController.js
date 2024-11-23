@@ -54,7 +54,7 @@ const loginUser = async (req, res) => {
         res.status(200).json({
             message: 'Login successful',
             token: response.data.idToken,
-            email: response.data.email, // Возвращаем email пользователя
+            displayName: response.data.displayName,
         });
     } catch (error) {
         console.error('Error logging in user:', error.message);
