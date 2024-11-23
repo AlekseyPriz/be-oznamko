@@ -1,10 +1,11 @@
 const express = require('express');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const categoryRoutes = require('./routes/categoryRoutes');
 const listingRoutes = require('./routes/listingRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const limiter = require('./middlewares/requestLimiter');
+const authRoutes = require('./routes/authRoutes');
+const corsMiddleware = require("./middlewares/corsMiddleware");
 
 const app = express();
 
@@ -12,8 +13,10 @@ const app = express();
 app.use(helmet());
 app.use(express.json());
 app.use(limiter);
+app.use(corsMiddleware);
 
 // Роуты
+app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/listings', listingRoutes);
 
